@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    Vector3 chunkPosition = new Vector3(viewedChunkCoord.x * GlobalAttributes.size -0.5f , 0, viewedChunkCoord.y * GlobalAttributes.size + 0.5f);
+                    Vector3 chunkPosition = new Vector3(viewedChunkCoord.x * (GlobalAttributes.size - GlobalAttributes.size * 0.06f) , 0, viewedChunkCoord.y * (GlobalAttributes.size - GlobalAttributes.size * 0.06f));
                     terrainChunks.Add(viewedChunkCoord, Instantiate(chunkPrefab,chunkPosition,Quaternion.identity,terrainParent));
                 }
             }
@@ -70,6 +70,15 @@ public class GameManager : MonoBehaviour
     {
         _instance = this;
         terrainParent = GameObject.FindGameObjectWithTag("Terrain").GetComponent<Transform>();
+        if (Player == null)
+        {
+            Player = GameObject.FindGameObjectWithTag("Player");
+        }
+        if(chunkPrefab == null)
+        {
+            GameObject go = (GameObject)Resources.Load("Prefabs/Chunk");
+            chunkPrefab = go.GetComponent<Chunk>();
+        }
     }
     private void FixedUpdate()
     {

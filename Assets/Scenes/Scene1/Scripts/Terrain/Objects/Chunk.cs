@@ -8,7 +8,8 @@ public class Chunk : MonoBehaviour
     float[,] noiseMap;
     Meshes[] meshes;
     Attributes ChunkAttributes;
-    
+    int previousLoD;
+
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
     MeshFilter meshFilter;
@@ -41,16 +42,19 @@ public class Chunk : MonoBehaviour
 
     public void OnGenerateRequestReceived(Chunk chunk)
     {
-        for (int i = 0; i < chunk.meshes.Length; i++)
+        lock (meshes)
         {
-            meshes[i].mesh = new Mesh();
-            meshes[i].mesh.vertices = meshes[i].meshInfo.vertices;
-            meshes[i].mesh.uv = meshes[i].meshInfo.uvs;
-            meshes[i].mesh.triangles = meshes[i].meshInfo.triangles;
-            meshes[i].mesh.RecalculateNormals();
+            for (int i = 0; i < chunk.meshes.Length; i++)
+            {
+                meshes[i].mesh = new Mesh();
+                meshes[i].mesh.vertices = meshes[i].meshInfo.vertices;
+                meshes[i].mesh.uv = meshes[i].meshInfo.uvs;
+                meshes[i].mesh.triangles = meshes[i].meshInfo.triangles;
+                meshes[i].mesh.RecalculateNormals();
 
+            }
+            //meshFilter.sharedMesh = meshes[0].mesh;
         }
-        meshFilter.sharedMesh = meshes[0].mesh;
 
     }
     public void UpdateTerrainChunk()
@@ -58,27 +62,34 @@ public class Chunk : MonoBehaviour
         Bounds bounds = new Bounds(transform.position, Vector2.one * ChunkAttributes.size);
         float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(GameManager.Instance.Player.transform.position));
         bool visible = viewerDstFromNearestEdge <= ChunkAttributes.viewDst;
-        //LODSwitch();
         setVisible(visible);
+        LODSwitch();
     }
     private void LODSwitch()
     {
-        
+
         if (isVisible())
         {
+            int currentLoD = -1;
             Bounds bounds = new Bounds(transform.position, Vector2.one * ChunkAttributes.size);
             float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(GameManager.Instance.Player.transform.position));
 
-            for (int i = 0; i < ChunkAttributes.levelsOfDetail.Length; i++)
+            if(currentLoD != previousLoD)
             {
-                if(viewerDstFromNearestEdge < ChunkAttributes.levelsOfDetail[i].viewThreshold)
+                for (int i = 0; i < ChunkAttributes.levelsOfDetail.Length; i++)
                 {
-                    meshFilter.sharedMesh = meshes[i].mesh;
-                    break;
-
+                    currentLoD++;
+                    if(viewerDstFromNearestEdge < ChunkAttributes.levelsOfDetail[i].viewThreshold)
+                    {
+                        meshFilter.sharedMesh = meshes[i].mesh;
+                        meshCollider.sharedMesh = meshes[i].mesh;
+                        previousLoD = currentLoD;
+                        break;
+                    }
                 }
             }
         }
+
     }
 
     public void setVisible(bool visible)

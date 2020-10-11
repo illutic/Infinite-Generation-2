@@ -11,12 +11,14 @@ public class GlobalAttributes : MonoBehaviour
     public int octaves;
     public float persistance;
     public float lacunarity;
-    public Vector2 offset;
     public float elevation;
+    public Vector2 offset;
     public AnimationCurve animationCurve;
     public int viewDst = 600;
     public LevelOfDetail[] levelsOfDetail;
+
     protected int levelOfDetail;
+    
     public Attributes getGlobalAttributes()
     {
         return new Attributes(size, seed, scale, octaves, persistance, lacunarity, offset, elevation, animationCurve, viewDst, levelsOfDetail, levelOfDetail);
