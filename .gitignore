@@ -338,3 +338,26 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/Library
+/ProjectSettings
+/Temp
+/UserSettings
+/Unity.TextMeshPro.csproj
+/Unity.Rider.Editor.csproj
+/Unity.CollabProxy.Editor.csproj
+/Infinite Generation 2.sln
+/Assembly-CSharp.Player.csproj
+/Assembly-CSharp.csproj
+/UnityEngine.UI.Player.csproj
+/UnityEngine.UI.csproj
+/UnityEngine.TestRunner.Player.csproj
+/UnityEngine.TestRunner.csproj
+/UnityEditor.UI.csproj
+/UnityEditor.TestRunner.csproj
+/Unity.VSCode.Editor.csproj
+/Unity.VisualStudio.Editor.csproj
+/Unity.Timeline.Player.csproj
+/Unity.Timeline.Editor.csproj
+/Unity.Timeline.csproj
+/Unity.TextMeshPro.Player.csproj
+/Unity.TextMeshPro.Editor.csproj
