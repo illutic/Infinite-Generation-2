@@ -16,8 +16,8 @@ public struct Attributes
     public int viewDst;
     public LevelOfDetail[] levelsOfDetail;
     public int LevelOfDetail;
-
-    public Attributes(int size, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset, float elevation, AnimationCurve animationCurve, int viewDst, LevelOfDetail[] levelsOfDetail, int levelOfDetail)
+    public Biome[] biomes;
+    public Attributes(int size, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset, float elevation, AnimationCurve animationCurve, int viewDst, LevelOfDetail[] levelsOfDetail, int levelOfDetail, Biome[] biomes)
     {
         this.size = size;
         this.seed = seed;
@@ -31,6 +31,7 @@ public struct Attributes
         this.viewDst = viewDst;
         this.levelsOfDetail = levelsOfDetail;
         LevelOfDetail = levelOfDetail;
+        this.biomes = biomes;
     }
     public Attributes(Attributes attributes)
     {
@@ -46,6 +47,7 @@ public struct Attributes
         this.viewDst = attributes.viewDst;
         this.levelsOfDetail = attributes.levelsOfDetail;
         LevelOfDetail = attributes.LevelOfDetail;
+        this.biomes = attributes.biomes;
     }
 }
 
@@ -76,4 +78,12 @@ public struct LevelOfDetail
 {
     public int LoD;
     public int viewThreshold;
+}
+
+[System.Serializable]
+public struct Biome
+{
+    public float elevation;
+    public Color color;
+    public GameObject[] objects;
 }

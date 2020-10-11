@@ -18,8 +18,9 @@ public class GameManager : MonoBehaviour
         }
 
     }
-    
+
     //Variable Initialization
+    public Material terrainMaterial;
     public Attributes GlobalAttributes;
     public Dictionary<Vector2, Chunk> terrainChunks = new Dictionary<Vector2, Chunk>();
     public List<Chunk> terrainChunksVisibleLastFrame = new List<Chunk>();
@@ -28,7 +29,7 @@ public class GameManager : MonoBehaviour
     Transform terrainParent;
     Vector2 viewerPosition;
     public int viewedChunks;
-
+    
 
 
     public void updateChunks()
@@ -68,7 +69,6 @@ public class GameManager : MonoBehaviour
     }
     private void Awake()
     {
-        _instance = this;
         terrainParent = GameObject.FindGameObjectWithTag("Terrain").GetComponent<Transform>();
         if (Player == null)
         {
@@ -79,7 +79,16 @@ public class GameManager : MonoBehaviour
             GameObject go = (GameObject)Resources.Load("Prefabs/Chunk");
             chunkPrefab = go.GetComponent<Chunk>();
         }
+        if(terrainMaterial == null)
+        {
+            terrainMaterial = (Material)Resources.Load("Materials/TerrainM");
+        }
+        
+        _instance = this;
+
     }
+
+
     private void FixedUpdate()
     {
         if (ThreadManager.chunks != null)
@@ -94,5 +103,10 @@ public class GameManager : MonoBehaviour
             }
         }
         updateChunks();
+    }
+
+    void Start()
+    {
+        ShaderData.UpdateShaderMeshHeights(terrainMaterial);
     }
 }

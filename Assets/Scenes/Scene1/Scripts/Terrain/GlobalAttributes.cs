@@ -16,12 +16,14 @@ public class GlobalAttributes : MonoBehaviour
     public AnimationCurve animationCurve;
     public int viewDst = 600;
     public LevelOfDetail[] levelsOfDetail;
+    public Biome[] biomes;
+
 
     protected int levelOfDetail;
     
     public Attributes getGlobalAttributes()
     {
-        return new Attributes(size, seed, scale, octaves, persistance, lacunarity, offset, elevation, animationCurve, viewDst, levelsOfDetail, levelOfDetail);
+        return new Attributes(size, seed, scale, octaves, persistance, lacunarity, offset, elevation, animationCurve, viewDst, levelsOfDetail, levelOfDetail,biomes);
     }
 
     private void Awake()

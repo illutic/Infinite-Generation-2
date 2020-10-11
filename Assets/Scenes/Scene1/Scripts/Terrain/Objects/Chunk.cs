@@ -55,10 +55,11 @@ public class Chunk : MonoBehaviour
             }
             //meshFilter.sharedMesh = meshes[0].mesh;
         }
-
+        
     }
     public void UpdateTerrainChunk()
     {
+        
         Bounds bounds = new Bounds(transform.position, Vector2.one * ChunkAttributes.size);
         float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(GameManager.Instance.Player.transform.position));
         bool visible = viewerDstFromNearestEdge <= ChunkAttributes.viewDst;
