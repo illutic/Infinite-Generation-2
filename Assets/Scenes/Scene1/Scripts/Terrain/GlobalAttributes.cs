@@ -23,6 +23,7 @@ public class GlobalAttributes : MonoBehaviour
     
     public Attributes getGlobalAttributes()
     {
+        seed = new System.Random().Next(-10000, 10000);
         return new Attributes(size, seed, scale, octaves, persistance, lacunarity, offset, elevation, animationCurve, viewDst, levelsOfDetail, levelOfDetail,biomes);
     }
 

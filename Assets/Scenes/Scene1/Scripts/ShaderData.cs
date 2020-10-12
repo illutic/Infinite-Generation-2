@@ -8,14 +8,14 @@ public class ShaderData
     {
         get
         {
-            return GameManager.Instance.GlobalAttributes.animationCurve.Evaluate(0) * GameManager.Instance.GlobalAttributes.scale;
+            return Mathf.Pow(GameManager.Instance.GlobalAttributes.animationCurve.Evaluate(0),2) * GameManager.Instance.GlobalAttributes.scale;
         }
     }
     public static float maxHeight
     {
         get
         {
-            return GameManager.Instance.GlobalAttributes.animationCurve.Evaluate(1) * GameManager.Instance.GlobalAttributes.scale;
+            return Mathf.Pow(GameManager.Instance.GlobalAttributes.animationCurve.Evaluate(1), 2) * GameManager.Instance.GlobalAttributes.scale;
         }
     }
     public static float[] startHeights 
@@ -49,13 +49,26 @@ public class ShaderData
             return GameManager.Instance.GlobalAttributes.biomes.Length;
         }
     }
+    public static float[] blends
+    {
+        get
+        {
+            float[] tempArray = new float[GameManager.Instance.GlobalAttributes.biomes.Length];
+            for (int i = 0; i < GameManager.Instance.GlobalAttributes.biomes.Length; i++)
+            {
+                tempArray[i] = GameManager.Instance.GlobalAttributes.biomes[i].blend;
+            }
+            return tempArray;
+        }
+    }
 
     public static void UpdateShaderMeshHeights(Material mat)
     {
-        mat.SetFloatArray("startHeights", startHeights);
-        mat.SetColorArray("colours", baseColours);
-        mat.SetInt("colourCount", colourCount);
         mat.SetFloat("minHeight", minHeight);
         mat.SetFloat("maxHeight", maxHeight);
+        mat.SetInt("colourCount", colourCount);
+        mat.SetColorArray("colours", baseColours);
+        mat.SetFloatArray("startHeights", startHeights);
+        mat.SetFloatArray("blends", blends);
     }
 }

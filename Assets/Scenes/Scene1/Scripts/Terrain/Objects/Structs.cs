@@ -85,5 +85,8 @@ public struct Biome
 {
     public float elevation;
     public Color color;
+    [Range(0,1)]
+    public float blend;
     public GameObject[] objects;
+
 }

@@ -14,12 +14,12 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
-  m_FogDensity: 0.01
-  m_LinearFogStart: 0
-  m_LinearFogEnd: 300
+  m_FogMode: 2
+  m_FogDensity: 0.0019
+  m_LinearFogStart: 500
+  m_LinearFogEnd: 600
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
@@ -134,7 +134,6 @@ GameObject:
   - component: {fileID: 296725454}
   - component: {fileID: 296725451}
   - component: {fileID: 296725452}
-  - component: {fileID: 296725453}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Manager
@@ -154,9 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b0b4f3245ed18944bfce742192edbc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 203
+  size: 301
   seed: 89
-  scale: 203
+  scale: 100
   octaves: 6
   persistance: 0.4
   lacunarity: 2
@@ -175,17 +174,26 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.5071381
-      value: 0.052647635
-      inSlope: 0.46359345
-      outSlope: 0.46359345
+      time: 0.4503884
+      value: 0.089977585
+      inSlope: 0.17386165
+      outSlope: 0.0021681106
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.17209445
+      outWeight: 0.29941094
+    - serializedVersion: 3
+      time: 0.48742378
+      value: 0.09039181
+      inSlope: 0.0010041498
+      outSlope: 0.0010041498
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.4203106
+      inWeight: 1
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1.5009296
-      value: 1.5019451
+      time: 1.2068176
+      value: 1.2016449
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -195,14 +203,49 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  viewDst: 600
+  viewDst: 900
   levelsOfDetail:
   - LoD: 1
+    viewThreshold: 100
+  - LoD: 2
     viewThreshold: 200
   - LoD: 3
+    viewThreshold: 300
+  - LoD: 4
     viewThreshold: 400
+  - LoD: 5
+    viewThreshold: 500
   - LoD: 6
-    viewThreshold: 600
+    viewThreshold: 900
+  biomes:
+  - elevation: 0
+    color: {r: 0.14046097, g: 0.13932894, b: 0.2924528, a: 0}
+    blend: 0
+    objects: []
+  - elevation: 0.02
+    color: {r: 0.14017446, g: 0.5235052, b: 0.6603774, a: 0}
+    blend: 0.01
+    objects: []
+  - elevation: 0.05
+    color: {r: 0.9056604, g: 0.78234506, b: 0.40583837, a: 0}
+    blend: 0.02
+    objects: []
+  - elevation: 0.09
+    color: {r: 0.22694911, g: 0.5660378, b: 0.29368386, a: 0}
+    blend: 0.02
+    objects: []
+  - elevation: 0.1
+    color: {r: 0.08397116, g: 0.3490566, b: 0.16967641, a: 0}
+    blend: 0.02
+    objects: []
+  - elevation: 0.2
+    color: {r: 0.24528301, g: 0.17384465, b: 0.15388037, a: 0}
+    blend: 0.1
+    objects: []
+  - elevation: 1.15
+    color: {r: 1, g: 1, b: 1, a: 0}
+    blend: 0.5
+    objects: []
 --- !u!114 &296725452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,22 +258,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aee6ae40a3eda454ea5f141f9309ab54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &296725453
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 296725450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36baf22e7664c854dbb9fc8bba959ea9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  terrainChunksVisibleLastFrame: []
-  Player: {fileID: 1896748851}
-  chunkPrefab: {fileID: 4709630939797227466, guid: 6fb4bc09f71bc864c8656456fdc586a1, type: 3}
-  viewedChunks: 0
 --- !u!4 &296725454
 Transform:
   m_ObjectHideFlags: 0
@@ -982,6 +1009,7 @@ GameObject:
   - component: {fileID: 1896748854}
   - component: {fileID: 1896748853}
   - component: {fileID: 1896748852}
+  - component: {fileID: 1896748856}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -996,7 +1024,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1896748851}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: dd5288b34ec23464695db8b2583880fe, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
@@ -1060,10 +1088,26 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1896748851}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 7.9, z: 0}
+  m_LocalPosition: {x: 0, y: 87, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 523371548}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1896748856
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896748851}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 2

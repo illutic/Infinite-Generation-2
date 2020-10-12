@@ -4,20 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    //Instance Creation
-    private static GameManager _instance;
-    public static GameManager Instance
-    {
-        get
-        {
-            if(_instance == null)
-            {
-                GameObject.FindGameObjectWithTag("Manager").AddComponent<GameManager>();
-            }
-            return _instance;
-        }
-
-    }
+    public static GameManager Instance { get; } = GameObject.FindGameObjectWithTag("Manager").AddComponent<GameManager>();
 
     //Variable Initialization
     public Material terrainMaterial;
@@ -83,13 +70,11 @@ public class GameManager : MonoBehaviour
         {
             terrainMaterial = (Material)Resources.Load("Materials/TerrainM");
         }
-        
-        _instance = this;
 
     }
 
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (ThreadManager.chunks != null)
         {
@@ -107,6 +92,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        ShaderData.UpdateShaderMeshHeights(terrainMaterial);
+        ShaderData.UpdateShaderMeshHeights(GameManager.Instance.terrainMaterial);
     }
 }

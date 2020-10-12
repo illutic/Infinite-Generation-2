@@ -64,17 +64,14 @@ public class Chunk : MonoBehaviour
         float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(GameManager.Instance.Player.transform.position));
         bool visible = viewerDstFromNearestEdge <= ChunkAttributes.viewDst;
         setVisible(visible);
-        LODSwitch();
+        LODSwitch(viewerDstFromNearestEdge);
     }
-    private void LODSwitch()
+    private void LODSwitch(float viewerDstFromNearestEdge)
     {
 
         if (isVisible())
         {
             int currentLoD = -1;
-            Bounds bounds = new Bounds(transform.position, Vector2.one * ChunkAttributes.size);
-            float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(GameManager.Instance.Player.transform.position));
-
             if(currentLoD != previousLoD)
             {
                 for (int i = 0; i < ChunkAttributes.levelsOfDetail.Length; i++)
