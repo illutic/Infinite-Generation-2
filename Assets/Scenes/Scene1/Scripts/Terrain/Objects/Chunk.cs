@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Chunk : MonoBehaviour
 {
     float[,] noiseMap;
     Meshes[] meshes;
-    Attributes ChunkAttributes;
-    int previousLoD;
+    public Attributes ChunkAttributes;
 
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
     MeshFilter meshFilter;
 
+    List<Vector3> chunkVertices;
+
     public void PreGenerate()
     {
-
-        
         lock (meshes)
         {
             for (int i = 0; i < meshes.Length; i++)
@@ -36,26 +36,40 @@ public class Chunk : MonoBehaviour
     }
     public void Generate()
     {
+        ChunkAttributes = new Attributes(GameManager.Instance.GlobalAttributes);
+        ChunkAttributes.offset = new Vector2(transform.position.x, transform.position.z);
+        noiseMap = Noise.GenerateNoiseMap(ChunkAttributes, Noise.NormalizeMode.Global);
+        meshes = new Meshes[ChunkAttributes.levelsOfDetail.Length];
         ThreadManager.Instance.RequestMesh(OnGenerateRequestReceived, this);
         EventManager.ChunkGenerationEvent -= Generate;
     }
 
     public void OnGenerateRequestReceived(Chunk chunk)
     {
-        lock (meshes)
+        for (int i = 0; i < chunk.meshes.Length; i++)
         {
-            for (int i = 0; i < chunk.meshes.Length; i++)
-            {
-                meshes[i].mesh = new Mesh();
-                meshes[i].mesh.vertices = meshes[i].meshInfo.vertices;
-                meshes[i].mesh.uv = meshes[i].meshInfo.uvs;
-                meshes[i].mesh.triangles = meshes[i].meshInfo.triangles;
-                meshes[i].mesh.RecalculateNormals();
-
-            }
-            //meshFilter.sharedMesh = meshes[0].mesh;
+            meshes[i].mesh = new Mesh();
+            meshes[i].mesh.vertices = meshes[i].meshInfo.vertices;
+            meshes[i].mesh.uv = meshes[i].meshInfo.uvs;
+            meshes[i].mesh.triangles = meshes[i].meshInfo.triangles;
+            meshes[i].mesh.RecalculateNormals();
         }
         
+    }
+    public void GenerateBiomeVertices()
+    {
+        chunkVertices = new List<Vector3>(meshes[0].meshInfo.vertices);
+        Utilities.quickSort(chunkVertices, 0, chunkVertices.Count - 1);
+        for (int biomeIndex = 0; biomeIndex < ChunkAttributes.biomes.Length; biomeIndex++)
+        {
+            List<Vector3> tempList = new List<Vector3>();
+            while (chunkVertices.Count > 0 && chunkVertices[0].y <= ChunkAttributes.biomes[biomeIndex].elevation)
+            {
+                tempList.Add(chunkVertices[0]);
+                chunkVertices.RemoveAt(0);
+            }
+            ChunkAttributes.biomes[biomeIndex].biomeVertices = tempList.ToArray();
+        }
     }
     public void UpdateTerrainChunk()
     {
@@ -72,7 +86,7 @@ public class Chunk : MonoBehaviour
         if (isVisible())
         {
             int currentLoD = -1;
-            if(currentLoD != previousLoD)
+            if(currentLoD != ChunkAttributes.LevelOfDetail)
             {
                 for (int i = 0; i < ChunkAttributes.levelsOfDetail.Length; i++)
                 {
@@ -81,13 +95,20 @@ public class Chunk : MonoBehaviour
                     {
                         meshFilter.sharedMesh = meshes[i].mesh;
                         meshCollider.sharedMesh = meshes[i].mesh;
-                        previousLoD = currentLoD;
+                        ChunkAttributes.LevelOfDetail = currentLoD;
                         break;
                     }
                 }
             }
         }
 
+    }
+    private void Awake()
+    {
+        meshRenderer = GetComponent<MeshRenderer>();
+        meshFilter = GetComponent<MeshFilter>();
+        meshCollider = GetComponent<MeshCollider>();
+        EventManager.ChunkGenerationEvent += Generate;
     }
 
     public void setVisible(bool visible)
@@ -100,18 +121,5 @@ public class Chunk : MonoBehaviour
         return meshRenderer.enabled;
     }
 
-    private void Awake()
-    {
-        meshRenderer = GetComponent<MeshRenderer>();
-        meshFilter = GetComponent<MeshFilter>();
-        meshCollider = GetComponent<MeshCollider>();
-
-        ChunkAttributes = GameManager.Instance.GlobalAttributes;
-        ChunkAttributes.offset = new Vector2(transform.position.x, transform.position.z);
-        noiseMap = Noise.GenerateNoiseMap(ChunkAttributes, Noise.NormalizeMode.Global);
-        meshes = new Meshes[ChunkAttributes.levelsOfDetail.Length];
-
-        EventManager.ChunkGenerationEvent += Generate;
-    }
 }
 

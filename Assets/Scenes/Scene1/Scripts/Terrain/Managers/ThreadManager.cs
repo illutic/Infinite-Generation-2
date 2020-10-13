@@ -6,19 +6,7 @@ using System;
 
 public class ThreadManager : MonoBehaviour
 {
-    private static ThreadManager _instance;
-    public static ThreadManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                GameObject.FindGameObjectWithTag("Manager").AddComponent<ThreadManager>();
-            }
-            return _instance;
-        }
-
-    }
+    public static ThreadManager Instance { get; } = GameObject.FindGameObjectWithTag("Manager").AddComponent<ThreadManager>();
 
     public static Queue<ThreadInfo<Chunk>> chunks;
 
@@ -34,6 +22,7 @@ public class ThreadManager : MonoBehaviour
     private void MeshThread(Action<Chunk> callback, Chunk parameter)
     {
         parameter.PreGenerate();
+        parameter.GenerateBiomeVertices();
         lock (chunks)
         {
             chunks.Enqueue(new ThreadInfo<Chunk>(callback, parameter));
@@ -43,7 +32,6 @@ public class ThreadManager : MonoBehaviour
     private void Awake()
     {
         chunks = new Queue<ThreadInfo<Chunk>>();
-        _instance = this;
     }
 
 }

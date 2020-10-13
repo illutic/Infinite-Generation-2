@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public struct Attributes
 {
     public int size;
@@ -31,7 +32,8 @@ public struct Attributes
         this.viewDst = viewDst;
         this.levelsOfDetail = levelsOfDetail;
         LevelOfDetail = levelOfDetail;
-        this.biomes = biomes;
+        this.biomes = new Biome[biomes.Length];
+        biomes.CopyTo(this.biomes,0);
     }
     public Attributes(Attributes attributes)
     {
@@ -47,7 +49,8 @@ public struct Attributes
         this.viewDst = attributes.viewDst;
         this.levelsOfDetail = attributes.levelsOfDetail;
         LevelOfDetail = attributes.LevelOfDetail;
-        this.biomes = attributes.biomes;
+        this.biomes = new Biome[attributes.biomes.Length];
+        attributes.biomes.CopyTo(this.biomes, 0);
     }
 }
 
@@ -88,5 +91,6 @@ public struct Biome
     [Range(0,1)]
     public float blend;
     public GameObject[] objects;
+    public Vector3[] biomeVertices;
 
 }
