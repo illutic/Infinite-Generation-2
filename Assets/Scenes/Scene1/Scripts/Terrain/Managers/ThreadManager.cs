@@ -10,7 +10,7 @@ public class ThreadManager : MonoBehaviour
 
     public static Queue<ThreadInfo<Chunk>> chunks;
 
-    public void RequestMesh(Action<Chunk> callback, Chunk parameter)
+    public void RequestChunk(Action<Chunk> callback, Chunk parameter)
     {
         ThreadStart threadStart = delegate
         {

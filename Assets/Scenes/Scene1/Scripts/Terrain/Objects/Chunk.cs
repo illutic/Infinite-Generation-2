@@ -8,13 +8,11 @@ public class Chunk : MonoBehaviour
 {
     float[,] noiseMap;
     Meshes[] meshes;
-    public Attributes ChunkAttributes;
+    Attributes ChunkAttributes;
 
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
     MeshFilter meshFilter;
-
-    List<Vector3> chunkVertices;
 
     public void PreGenerate()
     {
@@ -22,7 +20,6 @@ public class Chunk : MonoBehaviour
         {
             for (int i = 0; i < meshes.Length; i++)
             {
-                
                 meshes[i].LevelOfDetail = ChunkAttributes.levelsOfDetail[i].LoD;
                 meshes[i].meshInfo = new MeshInfo(MeshGen.vertices(ChunkAttributes.size,
                                                                    noiseMap,
@@ -40,7 +37,7 @@ public class Chunk : MonoBehaviour
         ChunkAttributes.offset = new Vector2(transform.position.x, transform.position.z);
         noiseMap = Noise.GenerateNoiseMap(ChunkAttributes, Noise.NormalizeMode.Global);
         meshes = new Meshes[ChunkAttributes.levelsOfDetail.Length];
-        ThreadManager.Instance.RequestMesh(OnGenerateRequestReceived, this);
+        ThreadManager.Instance.RequestChunk(OnGenerateRequestReceived, this);
         EventManager.ChunkGenerationEvent -= Generate;
     }
 
@@ -55,10 +52,12 @@ public class Chunk : MonoBehaviour
             meshes[i].mesh.RecalculateNormals();
         }
         
+        
     }
+
     public void GenerateBiomeVertices()
     {
-        chunkVertices = new List<Vector3>(meshes[0].meshInfo.vertices);
+        List<Vector3> chunkVertices = new List<Vector3>(meshes[0].meshInfo.vertices);
         Utilities.quickSort(chunkVertices, 0, chunkVertices.Count - 1);
         for (int biomeIndex = 0; biomeIndex < ChunkAttributes.biomes.Length; biomeIndex++)
         {
@@ -70,10 +69,20 @@ public class Chunk : MonoBehaviour
             }
             ChunkAttributes.biomes[biomeIndex].biomeVertices = tempList.ToArray();
         }
+        GenerateObjects();
+    }
+    public void GenerateObjects()
+    {
+        foreach (var biome in ChunkAttributes.biomes)
+        {
+            foreach (var item in biome.objects)
+            {
+                Instantiate(item, biome.biomeVertices[new System.Random().Next(0, biome.biomeVertices.Length)],Quaternion.identity, this.gameObject.transform);
+            }
+        }
     }
     public void UpdateTerrainChunk()
     {
-        
         Bounds bounds = new Bounds(transform.position, Vector2.one * ChunkAttributes.size);
         float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(GameManager.Instance.Player.transform.position));
         bool visible = viewerDstFromNearestEdge <= ChunkAttributes.viewDst;
@@ -82,7 +91,6 @@ public class Chunk : MonoBehaviour
     }
     private void LODSwitch(float viewerDstFromNearestEdge)
     {
-
         if (isVisible())
         {
             int currentLoD = -1;
@@ -101,7 +109,6 @@ public class Chunk : MonoBehaviour
                 }
             }
         }
-
     }
     private void Awake()
     {
@@ -110,7 +117,6 @@ public class Chunk : MonoBehaviour
         meshCollider = GetComponent<MeshCollider>();
         EventManager.ChunkGenerationEvent += Generate;
     }
-
     public void setVisible(bool visible)
     {
         meshRenderer.enabled = visible;
