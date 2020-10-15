@@ -18,7 +18,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &4709630939797227471
 Transform:
@@ -95,6 +95,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d4b6962852719f4e8c1c81ed16e2ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ChunkAttributes:
+    size: 0
+    seed: 0
+    scale: 0
+    octaves: 0
+    persistance: 0
+    lacunarity: 0
+    offset: {x: 0, y: 0}
+    elevation: 0
+    animationCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    viewDst: 0
+    levelsOfDetail: []
+    LevelOfDetail: 0
+    biomes: []
 --- !u!64 &1066658115157177528
 MeshCollider:
   m_ObjectHideFlags: 0

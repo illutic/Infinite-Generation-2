@@ -11,5 +11,6 @@ public class EventManager : MonoBehaviour
     private void Update()
     {
         ChunkGenerationEvent?.Invoke();
+        
     }
 }

@@ -23,10 +23,10 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 1.23
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubtractiveShadowColor: {r: 1, g: 1, b: 1, a: 1}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 7c0955a843cac66449fb7754cda3fcdb, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 301
   seed: 89
-  scale: 100
+  scale: 200
   octaves: 6
   persistance: 0.4
   lacunarity: 2
@@ -203,49 +203,70 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  viewDst: 900
+  viewDst: 600
   levelsOfDetail:
   - LoD: 1
     viewThreshold: 100
-  - LoD: 2
-    viewThreshold: 200
   - LoD: 3
     viewThreshold: 300
-  - LoD: 4
-    viewThreshold: 400
-  - LoD: 5
-    viewThreshold: 500
   - LoD: 6
-    viewThreshold: 900
+    viewThreshold: 600
   biomes:
   - elevation: 0
     color: {r: 0.14046097, g: 0.13932894, b: 0.2924528, a: 0}
     blend: 0
     objects: []
+    biomeVertices: []
   - elevation: 0.02
     color: {r: 0.14017446, g: 0.5235052, b: 0.6603774, a: 0}
     blend: 0.01
-    objects: []
+    objects:
+    - {fileID: 6633090572502542605, guid: f0163f7b995456346be8695262c6c429, type: 3}
+    biomeVertices: []
   - elevation: 0.05
     color: {r: 0.9056604, g: 0.78234506, b: 0.40583837, a: 0}
     blend: 0.02
-    objects: []
+    objects:
+    - {fileID: 136866, guid: 2327ed4809c34cf4c97a5316db3d4796, type: 3}
+    - {fileID: 118422, guid: 107cc8771223daf48be99527559937ff, type: 3}
+    - {fileID: 174854, guid: 3fd9507fb16d56044bcf520c1d14427c, type: 3}
+    - {fileID: 176278, guid: 3c74caa0496b18d4ba0a1009ebb4c992, type: 3}
+    biomeVertices: []
   - elevation: 0.09
     color: {r: 0.22694911, g: 0.5660378, b: 0.29368386, a: 0}
     blend: 0.02
-    objects: []
+    objects:
+    - {fileID: 1600545553093010, guid: d855296cdd38f1d43a9018c918395080, type: 3}
+    - {fileID: 1752188049916452, guid: c33d23e7dff87c94bbbf8303e2318397, type: 3}
+    - {fileID: 1955936618837180, guid: 465cbb465c9880c45887d824bd1f720b, type: 3}
+    - {fileID: 1132051335097494, guid: 736a3a898da8f894593c271ad73d5f1f, type: 3}
+    - {fileID: 1090827394831544, guid: e8e4c79974d5dd2469bc0c0055921376, type: 3}
+    - {fileID: 1488684175275520, guid: 2ab833ef86401f8409c0310ffb61631e, type: 3}
+    - {fileID: 1821325582817032, guid: 729e667a67b1fbd40adbda716ae59a2e, type: 3}
+    - {fileID: 1858472350046696, guid: 1ddaf242dd01c744393cf9bd8a9334d1, type: 3}
+    - {fileID: 1894949056180838, guid: 18e11e0f358c3684abd2b1363d394d68, type: 3}
+    - {fileID: 1305952025177006, guid: 7bd8a99d77d246b41b47d6f0958d6e89, type: 3}
+    biomeVertices: []
   - elevation: 0.1
     color: {r: 0.08397116, g: 0.3490566, b: 0.16967641, a: 0}
     blend: 0.02
-    objects: []
+    objects:
+    - {fileID: 142018, guid: d537224908c5f444f86c9e57e0c7234c, type: 3}
+    - {fileID: 184622, guid: c7bcf19bbfa57ed4ea9147dff66d5542, type: 3}
+    - {fileID: 142018, guid: d537224908c5f444f86c9e57e0c7234c, type: 3}
+    - {fileID: 142018, guid: d537224908c5f444f86c9e57e0c7234c, type: 3}
+    - {fileID: 184622, guid: c7bcf19bbfa57ed4ea9147dff66d5542, type: 3}
+    biomeVertices: []
   - elevation: 0.2
     color: {r: 0.24528301, g: 0.17384465, b: 0.15388037, a: 0}
     blend: 0.1
     objects: []
+    biomeVertices: []
   - elevation: 1.15
     color: {r: 1, g: 1, b: 1, a: 0}
     blend: 0.5
     objects: []
+    biomeVertices: []
 --- !u!114 &296725452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,7 +471,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 1.31
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -489,7 +510,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 1
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -741,7 +762,7 @@ LightingSettings:
   m_AlbedoBoost: 1
   m_IndirectOutputScale: 1
   m_UsingShadowmask: 1
-  m_BakeBackend: 1
+  m_BakeBackend: 2
   m_LightmapMaxSize: 1024
   m_BakeResolution: 40
   m_Padding: 2

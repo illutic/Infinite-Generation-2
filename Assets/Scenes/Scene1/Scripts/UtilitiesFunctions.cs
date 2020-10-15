@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Utilities 
+public class UtilitiesFunctions
 {
     static int partition(List<Vector3> arr, int low,
                                    int high)

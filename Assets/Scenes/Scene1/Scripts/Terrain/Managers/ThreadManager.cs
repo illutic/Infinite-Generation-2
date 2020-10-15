@@ -9,6 +9,7 @@ public class ThreadManager : MonoBehaviour
     public static ThreadManager Instance { get; } = GameObject.FindGameObjectWithTag("Manager").AddComponent<ThreadManager>();
 
     public static Queue<ThreadInfo<Chunk>> chunks;
+    public static Queue<ThreadInfo<Chunk>> chunkObjects;
 
     public void RequestChunk(Action<Chunk> callback, Chunk parameter)
     {
@@ -22,16 +23,33 @@ public class ThreadManager : MonoBehaviour
     private void MeshThread(Action<Chunk> callback, Chunk parameter)
     {
         parameter.PreGenerate();
-        parameter.GenerateBiomeVertices();
         lock (chunks)
         {
             chunks.Enqueue(new ThreadInfo<Chunk>(callback, parameter));
+        }
+    }
+    public void RequestBiomeVertices(Action<Chunk> callback, Chunk parameter)
+    {
+        ThreadStart threadStart = delegate
+        {
+            BiomeVerticesThread(callback, parameter);
+        };
+
+        new Thread(threadStart).Start();
+    }
+    private void BiomeVerticesThread(Action<Chunk> callback, Chunk parameter)
+    {
+        parameter.GenerateBiomeVertices();
+        lock (chunks)
+        {
+            chunkObjects.Enqueue(new ThreadInfo<Chunk>(callback, parameter));
         }
     }
 
     private void Awake()
     {
         chunks = new Queue<ThreadInfo<Chunk>>();
+        chunkObjects = new Queue<ThreadInfo<Chunk>>();
     }
 
 }

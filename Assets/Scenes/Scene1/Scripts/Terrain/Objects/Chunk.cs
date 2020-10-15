@@ -2,13 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using UnityEditor;
 using UnityEngine;
 
 public class Chunk : MonoBehaviour
 {
     float[,] noiseMap;
     Meshes[] meshes;
-    Attributes ChunkAttributes;
+    public Attributes ChunkAttributes;
+    List<Vector3> chunkVertices;
 
     MeshRenderer meshRenderer;
     MeshCollider meshCollider;
@@ -38,6 +41,11 @@ public class Chunk : MonoBehaviour
         noiseMap = Noise.GenerateNoiseMap(ChunkAttributes, Noise.NormalizeMode.Global);
         meshes = new Meshes[ChunkAttributes.levelsOfDetail.Length];
         ThreadManager.Instance.RequestChunk(OnGenerateRequestReceived, this);
+
+        GameObject water = Instantiate(ChunkAttributes.biomes[1].objects[0], this.transform);
+        water.transform.localPosition = new Vector3(ChunkAttributes.size / 2, 6, ChunkAttributes.size / 2);
+        water.transform.localScale = Vector3.one*(ChunkAttributes.size);
+
         EventManager.ChunkGenerationEvent -= Generate;
     }
 
@@ -51,81 +59,111 @@ public class Chunk : MonoBehaviour
             meshes[i].mesh.triangles = meshes[i].meshInfo.triangles;
             meshes[i].mesh.RecalculateNormals();
         }
-        
-        
+        meshFilter.mesh = meshes[meshes.Length-1].mesh;
+        chunkVertices = new List<Vector3>(meshFilter.mesh.vertices);
+        ThreadManager.Instance.RequestBiomeVertices(OnBiomeVerticesReceived,this);
     }
 
     public void GenerateBiomeVertices()
     {
-        List<Vector3> chunkVertices = new List<Vector3>(meshes[0].meshInfo.vertices);
-        Utilities.quickSort(chunkVertices, 0, chunkVertices.Count - 1);
-        for (int biomeIndex = 0; biomeIndex < ChunkAttributes.biomes.Length; biomeIndex++)
+        lock (chunkVertices)
         {
-            List<Vector3> tempList = new List<Vector3>();
-            while (chunkVertices.Count > 0 && chunkVertices[0].y <= ChunkAttributes.biomes[biomeIndex].elevation)
-            {
-                tempList.Add(chunkVertices[0]);
-                chunkVertices.RemoveAt(0);
-            }
-            ChunkAttributes.biomes[biomeIndex].biomeVertices = tempList.ToArray();
+                UtilitiesFunctions.quickSort(chunkVertices, 0, chunkVertices.Count - 1);
+                List<Vector3> tempList = new List<Vector3>();
+                for (int biomeIndex = 2; biomeIndex < ChunkAttributes.biomes.Length; biomeIndex++)
+                {
+                    
+                    while (chunkVertices.Count > 0 && chunkVertices[0].y <= ChunkAttributes.biomes[biomeIndex].elevation * ChunkAttributes.scale)
+                    {
+                        tempList.Add(chunkVertices[0]);
+                        chunkVertices.RemoveAt(0);
+                    }
+                    ChunkAttributes.biomes[biomeIndex].biomeVertices = new Vector3[tempList.Count];
+                    tempList.ToArray().CopyTo(ChunkAttributes.biomes[biomeIndex].biomeVertices, 0);
+                    tempList.Clear();
+                }
+            
         }
-        GenerateObjects();
     }
-    public void GenerateObjects()
+    public void OnBiomeVerticesReceived(Chunk chunk)
     {
-        foreach (var biome in ChunkAttributes.biomes)
+        System.Random random = new System.Random();
+        
+        for (int i = 2; i < ChunkAttributes.biomes.Length; i++)
         {
+            var biome = ChunkAttributes.biomes[i];
             foreach (var item in biome.objects)
             {
-                Instantiate(item, biome.biomeVertices[new System.Random().Next(0, biome.biomeVertices.Length)],Quaternion.identity, this.gameObject.transform);
+                int maxRecur = 10;
+                if (biome.biomeVertices.Length != 0)
+                {
+                    
+                    Vector3 randPos = biome.biomeVertices[random.Next(0, biome.biomeVertices.Length)];
+                    while(GameManager.Instance.Objects.ContainsKey(randPos) && maxRecur != 0)
+                    {
+                        randPos = biome.biomeVertices[random.Next(0, biome.biomeVertices.Length)];
+                        maxRecur--;
+                    }
+                    if (!GameManager.Instance.Objects.ContainsKey(randPos))
+                    {
+                        GameObject go = Instantiate(item, this.gameObject.transform);
+                        go.transform.localPosition = randPos;
+                        go.transform.localScale = Vector3.one * new System.Random().Next(5, 6);
+
+                        
+                    }
+                    
+                }
             }
         }
     }
+
     public void UpdateTerrainChunk()
     {
         Bounds bounds = new Bounds(transform.position, Vector2.one * ChunkAttributes.size);
         float viewerDstFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(GameManager.Instance.Player.transform.position));
         bool visible = viewerDstFromNearestEdge <= ChunkAttributes.viewDst;
         setVisible(visible);
-        LODSwitch(viewerDstFromNearestEdge);
+        if (visible)
+        {
+            LODSwitch(viewerDstFromNearestEdge);
+        }
     }
     private void LODSwitch(float viewerDstFromNearestEdge)
     {
-        if (isVisible())
+        int currentLoD = -1;
+        if(currentLoD != ChunkAttributes.LevelOfDetail)
         {
-            int currentLoD = -1;
-            if(currentLoD != ChunkAttributes.LevelOfDetail)
+            for (int i = 0; i < ChunkAttributes.levelsOfDetail.Length; i++)
             {
-                for (int i = 0; i < ChunkAttributes.levelsOfDetail.Length; i++)
+                currentLoD++;
+                if(viewerDstFromNearestEdge < ChunkAttributes.levelsOfDetail[i].viewThreshold)
                 {
-                    currentLoD++;
-                    if(viewerDstFromNearestEdge < ChunkAttributes.levelsOfDetail[i].viewThreshold)
-                    {
-                        meshFilter.sharedMesh = meshes[i].mesh;
-                        meshCollider.sharedMesh = meshes[i].mesh;
-                        ChunkAttributes.LevelOfDetail = currentLoD;
-                        break;
-                    }
+                    meshFilter.sharedMesh = meshes[i].mesh;
+                    meshCollider.sharedMesh = meshes[i].mesh;
+                    ChunkAttributes.LevelOfDetail = currentLoD;
+                    break;
                 }
             }
         }
+        
     }
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         meshFilter = GetComponent<MeshFilter>();
         meshCollider = GetComponent<MeshCollider>();
+        meshCollider.enabled = true;
+
         EventManager.ChunkGenerationEvent += Generate;
     }
     public void setVisible(bool visible)
     {
-        meshRenderer.enabled = visible;
-        meshCollider.enabled = visible;
+        this.gameObject.SetActive(visible);
     }
     public bool isVisible()
     {
-        return meshRenderer.enabled;
+        return this.gameObject.activeSelf;
     }
-
 }
 

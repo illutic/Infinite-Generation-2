@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     //Initialization
     public Material terrainMaterial;
     public Attributes GlobalAttributes;
+    public Dictionary<Vector3, GameObject> Objects;
     public Dictionary<Vector2, Chunk> terrainChunks = new Dictionary<Vector2, Chunk>();
     public List<Chunk> terrainChunksVisibleLastFrame = new List<Chunk>();
     public GameObject Player;
@@ -16,7 +17,6 @@ public class GameManager : MonoBehaviour
     Transform terrainParent;
     Vector2 viewerPosition;
     public int viewedChunks;
-    
 
 
     public void updateChunks()
@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
                     if (terrainChunks[viewedChunkCoord].isVisible())
                     {
                         terrainChunksVisibleLastFrame.Add(terrainChunks[viewedChunkCoord]);
+                        terrainChunks[viewedChunkCoord].setVisible(true);
                     }
                 }
                 else
@@ -54,6 +55,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
     private void Awake()
     {
         terrainParent = GameObject.FindGameObjectWithTag("Terrain").GetComponent<Transform>();
@@ -70,11 +72,11 @@ public class GameManager : MonoBehaviour
         {
             terrainMaterial = (Material)Resources.Load("Materials/TerrainM");
         }
-
+        Objects = new Dictionary<Vector3, GameObject>();
     }
 
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (ThreadManager.chunks != null)
         {
@@ -87,21 +89,23 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        if (ThreadManager.chunkObjects != null)
+        {
+            if (ThreadManager.chunkObjects.Count != 0)
+            {
+                lock (ThreadManager.chunkObjects)
+                {
+                    ThreadInfo<Chunk> chunkThreadInfo = ThreadManager.chunkObjects.Dequeue();
+                    chunkThreadInfo.callback.Invoke(chunkThreadInfo.parameter);
+                }
+            }
+        }
         updateChunks();
     }
 
-    Vector3[] testArr = new Vector3[10] {   new Vector3(12, 99, 45),
-                                            new Vector3(98,-0.4f,94),
-                                            new Vector3(100,2,85),
-                                            new Vector3(48,1,24),
-                                            new Vector3(48,0.5f,24),
-                                            new Vector3(48,100,24),
-                                            new Vector3(48,12,24),
-                                            new Vector3(48,489,24),
-                                            new Vector3(48,9,24),
-                                            new Vector3(48,42,24) };
     void Start()
     {
         ShaderData.UpdateShaderMeshHeights(GameManager.Instance.terrainMaterial);
     }
+
 }
